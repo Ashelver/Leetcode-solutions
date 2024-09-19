@@ -2,11 +2,10 @@
 #include <unordered_map>
 #include <vector>
 
-
 class Solution {
 public:
     vector<int> twoSum(vector<int>& nums, int target) {
-        unordered_map<int, int>hash_map;
+        unordered_map<int, int>hash_map; // key will be the number in `nums`, value will be the indice of the number 
         int current_num;
         int complement_num;
         for (int i = 0; i < nums.size(); i++){
