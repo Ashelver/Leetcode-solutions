@@ -1,35 +1,56 @@
 class Solution {
     public String longestPalindrome(String s) {
-        int i = 0; // start from zero length of the string
-        ArrayList<Integer> indices = new ArrayList<>();
+        HashMap<Integer, Integer> oddStartEnd = new HashMap<>();
+        HashMap<Integer, Integer> evenStartEnd = new HashMap<>();
         for (int j = 0; j < s.length(); j++){
             // Initially push all the indices into the array
-            indices.add(j);
+            if (j < (s.length() - 1) && s.charAt(j) == s.charAt(j+1)) {
+                evenStartEnd.put(j,j + 1);
+            }
+            oddStartEnd.put(j,j);
         }
-
-        if (indices.isEmpty()){
+        if (oddStartEnd.isEmpty()){
             // Deal with empty string
             return "";
         }
 
-        while (true){          
-            // Use Iterator to do deletion safely
-            Iterator<Integer> iterator = indices.iterator();
-            String randomPS = s.substring(indices.get(0)-i, indices.get(0) + i + 1);
-            while (iterator.hasNext()) {
-                int index = iterator.next();
-                if (index - i < 0 || index + i >= s.length() || s.charAt(index - i) != s.charAt(index + i)){
-                    iterator.remove();
+        while (true){
+            int randomStart = 0;
+            int randomEnd = 0;
+            HashMap<Integer, Integer> oddNextLevel = new HashMap<>();
+            HashMap<Integer, Integer> evenNextLevel = new HashMap<>();
+            for (Integer start: oddStartEnd.keySet()) {
+                Integer end = oddStartEnd.get(start);
+                // Odd length
+                randomStart = start;
+                randomEnd = end;
+                if (start - 1 >= 0 && end + 1 < s.length() && s.charAt(start - 1) == s.charAt(end + 1)){
+                    oddNextLevel.put(start - 1,end + 1);
+
                 }
             }
-           
 
-            // Stop conditions  
-            if (indices.isEmpty()){
-                return randomPS;
+            for (Integer start: evenStartEnd.keySet()) {
+                Integer end = evenStartEnd.get(start);
+                randomStart = start;
+                randomEnd = end;
+                // Odd length
+                if (start - 1 >= 0 && end + 1 < s.length() && s.charAt(start - 1) == s.charAt(end + 1)){
+                    evenNextLevel.put(start - 1,end + 1);
+                    
+                }
             }
 
-            i ++;
+            if (oddNextLevel.isEmpty() && evenNextLevel.isEmpty()){
+                // Can not go forward
+                return s.substring(randomStart, randomEnd + 1);
+            } else {
+                oddStartEnd.clear();
+                oddStartEnd.putAll(oddNextLevel);
+                evenStartEnd.clear();
+                evenStartEnd.putAll(evenNextLevel);
+            }
         }
+
     }
 }
